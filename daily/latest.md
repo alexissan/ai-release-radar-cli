@@ -1,16 +1,15 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-09 14:29 UTC
+Generated: 2026-03-09 15:29 UTC
 
 ```text
 AI Release Radar — Today
 
 1) Top updates
-- [Anthropic] Where things stand with the Department of War Announcements Mar 5, 2026 A statement from Dario Amodei. (https://www.anthropic.com/news/where-stand-department-war)
-- [Anthropic] Announcements Feb 27, 2026 Statement on the comments from Secretary of War Pete Hegseth Anthropic's response to the Secretary of War and advice to customers. (https://www.anthropic.com/news/statement-comments-secretary-war)
-- [Anthropic] Announcements Feb 26, 2026 Statement from Dario Amodei on our discussions with the Department of War A statement from our CEO on national security uses of AI. (https://www.anthropic.com/news/statement-department-of-war)
-- [Anthropic] Product Feb 17, 2026 Introducing Claude Sonnet 4.6 Sonnet 4.6 delivers frontier performance across coding, agents, and professional work at scale. (https://www.anthropic.com/news/claude-sonnet-4-6)
 - [Google Gemini] Gemini 3 brings upgraded smarts and new capabilities to the Gemini app Today we’re unveiling a major update for the Gemini app, and it all starts with Gemini 3. (https://blog.google/products-and-platforms/products/gemini/gemini-3-gemini-app/)
+- [Google Gemini] Find out what’s new in the Gemini app in February's Gemini Drop. (https://blog.google/innovation-and-ai/products/gemini-app/gemini-drop-february-2026/)
+- [Google Gemini] Create personalized “Year of the Fire Horse” musical tracks with Gemini (https://blog.google/innovation-and-ai/products/gemini-app/lyria-3-year-of-the-fire-horse/)
+- [Google Gemini] 5 ways Gemini can help students work smarter (https://blog.google/products-and-platforms/products/education/gemini-features-for-students/)
 
 2) Why it matters (founders/devs)
 - Model/platform updates can change product quality, latency, and cost assumptions quickly. Re-check your roadmap and evaluation suite before shipping this week.
@@ -20,8 +19,9 @@ AI Release Radar — Today
 
 Fallback status
 - OpenAI: unavailable (HTTP 403)
+- Anthropic: unavailable (HTTP 500)
 - Recovered with partial briefing from reachable sources.
 
 4) Optional X post draft
-- AI Release Radar: Anthropic: Where things stand with the Department of War Announcements Mar 5, 2026 A statement from Dario Amodei. | Anthropic: Announcements Feb 27, 2026 Statement on the comments from Secretary of War Pete Hegseth Anthropic's response to...
+- AI Release Radar: Google Gemini: Gemini 3 brings upgraded smarts and new capabilities to the Gemini app Today we’re unveiling a major update for the Gemini app, and it all starts with Gemini 3. | Google Gemini: Find out what’s new in the Gemini app in Febr...
 ```
