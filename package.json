@@ -1,0 +1,37 @@
+{
+  "name": "ai-release-radar-cli",
+  "version": "0.1.0",
+  "description": "Daily AI release radar from official OpenAI, Anthropic, and Google Gemini news sources",
+  "type": "module",
+  "bin": {
+    "ai-radar": "dist/cli.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts today --tweet",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "cli",
+    "ai",
+    "openai",
+    "anthropic",
+    "gemini",
+    "news"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^2.1.8"
+  }
+}
