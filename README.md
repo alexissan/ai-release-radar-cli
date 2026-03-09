@@ -94,3 +94,11 @@ AI Release Radar — Today
 ## License
 
 MIT
+
+## Daily public output
+
+- Latest output (repo): `daily/latest.md`
+- Public page (GitHub Pages): enable **Settings → Pages → Source: GitHub Actions**
+- Workflows:
+  - `Daily Radar` updates output hourly
+  - `Deploy Pages` publishes `site/index.html`
