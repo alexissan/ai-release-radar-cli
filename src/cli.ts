@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { runToday } from './core.js';
+import { runCompare, runToday } from './core.js';
 
 const program = new Command();
 
@@ -15,6 +15,16 @@ program
   .option('--tweet', 'Include an optional X post draft under 260 chars')
   .action(async (opts: { tweet?: boolean }) => {
     const output = await runToday(Boolean(opts.tweet));
+    console.log(output);
+  });
+
+program
+  .command('compare')
+  .description('Compare short-term trend windows from latest available updates')
+  .option('--days <n>', 'Window size in days (default: 2)', '2')
+  .action(async (opts: { days?: string }) => {
+    const days = Number.parseInt(opts.days ?? '2', 10);
+    const output = await runCompare(Number.isFinite(days) ? days : 2);
     console.log(output);
   });
 

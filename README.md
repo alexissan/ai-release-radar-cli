@@ -38,12 +38,32 @@ ai-radar today
 ai-radar today --tweet
 ```
 
+### Compare short-term trend windows (default: 2 days)
+
+```bash
+ai-radar compare
+```
+
+### Compare with explicit window size
+
+```bash
+ai-radar compare --days 2
+```
+
 ## Output format
+
+### `today`
 
 1. Top updates (max 5 bullets)
 2. Why it matters (founders/devs)
 3. One practical action today
 4. Optional X post draft (`--tweet`)
+
+### `compare`
+
+1. Number of updates by source (latest window vs previous window)
+2. Top repeated keywords by window (basic frequency over titles)
+3. One short "what changed" paragraph
 
 ## Fallback behavior
 
@@ -64,6 +84,7 @@ npm run build
 
 ```bash
 ai-radar today --tweet
+ai-radar compare --days 2
 ```
 
 Example (truncated):
@@ -83,6 +104,24 @@ AI Release Radar — Today
 
 4) Optional X post draft
 - AI Release Radar: ...
+```
+
+Compare example (truncated):
+
+```text
+AI Release Radar — Compare (2-day windows)
+
+1) Updates by source
+- OpenAI: latest 2 vs previous 2
+- Anthropic: latest 2 vs previous 2
+- Google Gemini: latest 2 vs previous 2
+
+2) Top repeated keywords
+- Latest: ...
+- Previous: ...
+
+3) What changed
+- Across the latest window, total update volume is ...
 ```
 
 ## Limitations

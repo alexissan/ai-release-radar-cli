@@ -18,11 +18,22 @@ export interface SourceFetchResult {
   error?: string;
 }
 
+export interface CompareStats {
+  countsBySource: Record<SourceName, number>;
+  topKeywords: Array<{ keyword: string; count: number }>;
+}
+
 export const SOURCES: SourceConfig[] = [
   { name: 'OpenAI', url: 'https://openai.com/news/' },
   { name: 'Anthropic', url: 'https://www.anthropic.com/news' },
   { name: 'Google Gemini', url: 'https://blog.google/products/gemini/' }
 ];
+
+const STOPWORDS = new Set([
+  'the', 'and', 'for', 'with', 'from', 'into', 'your', 'this', 'that', 'new', 'more', 'about', 'after', 'over',
+  'under', 'have', 'has', 'are', 'will', 'today', 'launch', 'update', 'updates', 'openai', 'anthropic', 'gemini',
+  'google', 'model', 'models', 'product', 'products', 'release', 'releases', 'news', 'their', 'they', 'you', 'our'
+]);
 
 export function extractLinks(html: string, baseUrl: string, source: SourceName, limit = 4): UpdateItem[] {
   const links = Array.from(html.matchAll(/<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi));
@@ -87,7 +98,7 @@ export async function fetchWithTimeout(url: string, timeoutMs = 9000): Promise<R
   }
 }
 
-export async function fetchSource(source: SourceConfig): Promise<SourceFetchResult> {
+export async function fetchSource(source: SourceConfig, limit = 4): Promise<SourceFetchResult> {
   try {
     const res = await fetchWithTimeout(source.url);
     if (!res.ok) {
@@ -100,7 +111,7 @@ export async function fetchSource(source: SourceConfig): Promise<SourceFetchResu
     }
 
     const html = await res.text();
-    const items = extractLinks(html, source.url, source.name, 4);
+    const items = extractLinks(html, source.url, source.name, limit);
 
     if (items.length === 0) {
       return {
@@ -139,6 +150,118 @@ export function buildTweet(updates: UpdateItem[]): string {
   const text = `AI Release Radar: ${lead}`;
   if (text.length <= 259) return text;
   return `${text.slice(0, 256)}...`;
+}
+
+function countBySource(items: UpdateItem[]): Record<SourceName, number> {
+  return {
+    OpenAI: items.filter((i) => i.source === 'OpenAI').length,
+    Anthropic: items.filter((i) => i.source === 'Anthropic').length,
+    'Google Gemini': items.filter((i) => i.source === 'Google Gemini').length
+  };
+}
+
+function tokenizeTitles(items: UpdateItem[]): string[] {
+  return items
+    .flatMap((i) => i.title.toLowerCase().split(/[^a-z0-9]+/g))
+    .filter((t) => t.length >= 4 && !STOPWORDS.has(t));
+}
+
+function getTopKeywords(items: UpdateItem[], max = 5): Array<{ keyword: string; count: number }> {
+  const freq = new Map<string, number>();
+  for (const token of tokenizeTitles(items)) {
+    freq.set(token, (freq.get(token) ?? 0) + 1);
+  }
+
+  return [...freq.entries()]
+    .sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0]))
+    .slice(0, max)
+    .map(([keyword, count]) => ({ keyword, count }));
+}
+
+export function computeCompareWindows(results: SourceFetchResult[], days: number): { latest: UpdateItem[]; previous: UpdateItem[] } {
+  const windowSize = Math.max(1, days);
+  const latest: UpdateItem[] = [];
+  const previous: UpdateItem[] = [];
+
+  for (const result of results) {
+    latest.push(...result.items.slice(0, windowSize));
+    previous.push(...result.items.slice(windowSize, windowSize * 2));
+  }
+
+  return { latest, previous };
+}
+
+export function buildCompareStats(items: UpdateItem[]): CompareStats {
+  return {
+    countsBySource: countBySource(items),
+    topKeywords: getTopKeywords(items)
+  };
+}
+
+export function buildWhatChanged(latest: CompareStats, previous: CompareStats): string {
+  const totalLatest = Object.values(latest.countsBySource).reduce((a, b) => a + b, 0);
+  const totalPrevious = Object.values(previous.countsBySource).reduce((a, b) => a + b, 0);
+  const delta = totalLatest - totalPrevious;
+  const deltaWord = delta > 0 ? `up ${delta}` : delta < 0 ? `down ${Math.abs(delta)}` : 'flat';
+
+  const sourceDeltas = (Object.keys(latest.countsBySource) as SourceName[])
+    .map((s) => ({ source: s, delta: latest.countsBySource[s] - previous.countsBySource[s] }))
+    .filter((x) => x.delta !== 0)
+    .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+  const sourcePart = sourceDeltas.length > 0
+    ? `${sourceDeltas[0].source} moved most (${sourceDeltas[0].delta > 0 ? '+' : ''}${sourceDeltas[0].delta}).`
+    : 'Source mix stayed balanced.';
+
+  const latestTop = latest.topKeywords[0]?.keyword;
+  const prevTop = previous.topKeywords[0]?.keyword;
+  const keywordPart = latestTop && latestTop !== prevTop
+    ? `Headline focus shifted toward “${latestTop}” (previously “${prevTop ?? 'none'}”).`
+    : latestTop
+      ? `Headline focus stayed around “${latestTop}.”`
+      : 'Not enough signal in titles yet.';
+
+  return `Across the latest window, total update volume is ${deltaWord} versus the previous window. ${sourcePart} ${keywordPart}`;
+}
+
+export function formatCompare(results: SourceFetchResult[], days = 2): string {
+  const { latest, previous } = computeCompareWindows(results, days);
+  const latestStats = buildCompareStats(latest);
+  const previousStats = buildCompareStats(previous);
+
+  const lines: string[] = [];
+  lines.push(`AI Release Radar — Compare (${days}-day windows)`);
+  lines.push('');
+  lines.push('1) Updates by source');
+  for (const source of ['OpenAI', 'Anthropic', 'Google Gemini'] as SourceName[]) {
+    lines.push(`- ${source}: latest ${latestStats.countsBySource[source]} vs previous ${previousStats.countsBySource[source]}`);
+  }
+
+  lines.push('');
+  lines.push('2) Top repeated keywords');
+  const latestKw = latestStats.topKeywords.length > 0
+    ? latestStats.topKeywords.map((k) => `${k.keyword} (${k.count})`).join(', ')
+    : 'none';
+  const prevKw = previousStats.topKeywords.length > 0
+    ? previousStats.topKeywords.map((k) => `${k.keyword} (${k.count})`).join(', ')
+    : 'none';
+  lines.push(`- Latest: ${latestKw}`);
+  lines.push(`- Previous: ${prevKw}`);
+
+  lines.push('');
+  lines.push('3) What changed');
+  lines.push(`- ${buildWhatChanged(latestStats, previousStats)}`);
+
+  const failed = results.filter((r) => !r.ok);
+  if (failed.length > 0) {
+    lines.push('');
+    lines.push('Fallback status');
+    for (const f of failed) {
+      lines.push(`- ${f.source}: unavailable (${f.error ?? 'unknown error'})`);
+    }
+  }
+
+  return lines.join('\n');
 }
 
 export function formatBriefing(results: SourceFetchResult[], includeTweet = false): string {
@@ -201,4 +324,11 @@ export function formatBriefing(results: SourceFetchResult[], includeTweet = fals
 export async function runToday(includeTweet = false): Promise<string> {
   const settled = await Promise.all(SOURCES.map((s) => fetchSource(s)));
   return formatBriefing(settled, includeTweet);
+}
+
+export async function runCompare(days = 2): Promise<string> {
+  const safeDays = Number.isFinite(days) ? Math.max(1, Math.floor(days)) : 2;
+  const perSourceLimit = Math.max(4, safeDays * 2);
+  const settled = await Promise.all(SOURCES.map((s) => fetchSource(s, perSourceLimit)));
+  return formatCompare(settled, safeDays);
 }
