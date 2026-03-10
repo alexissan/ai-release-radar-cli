@@ -44,6 +44,47 @@ ai-radar compare
 ai-radar compare --days 2
 ```
 
+### Watch mode: continuous polling
+
+Poll sources continuously and get notified of new updates:
+
+```bash
+ai-radar watch                    # Default: poll every 30 minutes
+ai-radar watch --interval 15      # Poll every 15 minutes
+```
+
+Press `Ctrl+C` to exit watch mode gracefully.
+
+### Generate a digest summary
+
+View updates from the last N hours/days:
+
+```bash
+ai-radar digest                   # Default: last 24h
+ai-radar digest --since 48h       # Last 48 hours
+ai-radar digest --since 7d        # Last 7 days
+ai-radar digest --output json     # JSON format
+```
+
+### Search cached updates
+
+Search for keywords across all cached updates:
+
+```bash
+ai-radar search "GPT"
+ai-radar search "Claude Sonnet"
+```
+
+### Check source health
+
+Verify which sources are currently reachable:
+
+```bash
+ai-radar sources
+```
+
+This shows the health status of each source and the latest item from each.
+
 ## Output format
 
 ### `today`
@@ -114,11 +155,22 @@ AI Release Radar — Compare (2-day windows)
 - Across the latest window, total update volume is ...
 ```
 
+## Cache and State
+
+The CLI maintains a local cache in `~/.ai-radar/`:
+- `cache.json`: Stores recent updates from all sources (last 100 polls)
+- `state.json`: Tracks watch mode state (last poll time, seen URLs)
+
+This enables:
+- Fast searches across historical data
+- Digest summaries spanning multiple time ranges
+- Watch mode notification of only new updates
+
 ## Limitations
 
 - Parsing is HTML-structure dependent; official pages may change markup.
 - This MVP prioritizes resilience and concise summaries over deep semantic ranking.
-- No persistent cache yet (live fetch each run).
+- Cache persists locally only; not synced across machines.
 
 ## License
 
