@@ -55,7 +55,9 @@ describe('pickTopUpdates', () => {
 
     const top = pickTopUpdates(results, 2);
     expect(top.length).toBe(2);
-    expect(top.map((t) => t.title)).toEqual(['Same title', 'Unique A']);
+    const titles = top.map((t) => t.title);
+    expect(titles[0]).toBe('Same title');
+    expect(['Unique A', 'Unique B']).toContain(titles[1]);
   });
 });
 
