@@ -148,20 +148,54 @@ function extractOpenAiFromSitemap(xml: string, limit = 4): UpdateItem[] {
   return out;
 }
 
+function decodeEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
+function summarizeAtomContent(raw: string): string {
+  const decoded = decodeEntities(
+    raw
+      .replace(/<!\[CDATA\[|\]\]>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
+
+  const clean = decoded.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!clean) return '';
+  const sentence = clean.split(/(?<=[.!?])\s+/)[0] ?? clean;
+  return sentence.length > 110 ? `${sentence.slice(0, 107)}…` : sentence;
+}
+
 function extractFromAtom(xml: string, source: SourceName, limit = 3): UpdateItem[] {
   const entries = Array.from(xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g));
   const out: UpdateItem[] = [];
+
   for (const e of entries) {
     const block = e[1];
-    const title = (block.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? '')
-      .replace(/<!\[CDATA\[|\]\]>/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const rawTitle = block.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? '';
+    const baseTitle = decodeEntities(rawTitle.replace(/<!\[CDATA\[|\]\]>/g, '').replace(/\s+/g, ' ').trim());
     const href = block.match(/<link[^>]*href="([^"]+)"/i)?.[1] ?? '';
-    if (!title || !href) continue;
-    out.push({ source, title, url: href });
+    const rawContent = block.match(/<content[^>]*>([\s\S]*?)<\/content>/i)?.[1] ?? '';
+    const summary = summarizeAtomContent(rawContent);
+
+    if (!baseTitle || !href) continue;
+
+    const releaseStyle = /^v?\d+\.\d+(\.\d+)?/.test(baseTitle);
+    const enrichedTitle = releaseStyle
+      ? `${baseTitle} — ${summary || 'SDK release notes update'}`
+      : (summary && !baseTitle.toLowerCase().includes(summary.toLowerCase())
+          ? `${baseTitle} — ${summary}`
+          : baseTitle);
+
+    out.push({ source, title: enrichedTitle, url: href });
     if (out.length >= limit) break;
   }
+
   return out;
 }
 
