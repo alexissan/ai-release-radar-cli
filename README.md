@@ -32,12 +32,6 @@ ai-radar today
 ai-radar today
 ```
 
-### Include optional X post draft (under 260 chars)
-
-```bash
-ai-radar today --tweet
-```
-
 ### Compare short-term trend windows (default: 2 days)
 
 ```bash
@@ -57,7 +51,6 @@ ai-radar compare --days 2
 1. Top updates (max 5 bullets)
 2. Why it matters (founders/devs)
 3. One practical action today
-4. Optional X post draft (`--tweet`)
 
 ### `compare`
 
@@ -83,7 +76,7 @@ npm run build
 ## Example
 
 ```bash
-ai-radar today --tweet
+ai-radar today
 ai-radar compare --days 2
 ```
 
@@ -101,9 +94,6 @@ AI Release Radar — Today
 
 3) One practical action today
 - ...
-
-4) Optional X post draft
-- AI Release Radar: ...
 ```
 
 Compare example (truncated):

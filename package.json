@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsx src/cli.ts today --tweet",
+    "dev": "tsx src/cli.ts today",
     "test": "vitest run",
     "lint": "tsc -p tsconfig.json --noEmit"
   },

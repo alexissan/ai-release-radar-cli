@@ -2,7 +2,7 @@
 set -euo pipefail
 mkdir -p daily site
 TS="$(date -u +"%Y-%m-%d %H:%M UTC")"
-node dist/cli.js today --tweet > daily/latest.txt || true
+node dist/cli.js today > daily/latest.txt || true
 {
   echo "# AI Release Radar — Latest"
   echo

@@ -1,6 +1,6 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-10 13:36 UTC
+Generated: 2026-03-10 14:13 UTC
 
 ```text
 AI Release Radar — Today
@@ -21,7 +21,4 @@ AI Release Radar — Today
 Fallback status
 - OpenAI: unavailable (HTTP 403)
 - Recovered with partial briefing from reachable sources.
-
-4) Optional X post draft
-- AI Release Radar: Anthropic: Where things stand with the Department of War Announcements Mar 5, 2026 A statement from Dario Amodei. | Anthropic: Announcements Feb 27, 2026 Statement on the comments from Secretary of War Pete Hegseth Anthropic's response to...
 ```

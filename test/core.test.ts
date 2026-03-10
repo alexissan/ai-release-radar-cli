@@ -80,10 +80,9 @@ describe('formatBriefing', () => {
       { source: 'Google Gemini', ok: true, items: [{ source: 'Google Gemini', title: 'Gemini roadmap update for app builders', url: 'https://blog.google/b' }] }
     ];
 
-    const output = formatBriefing(results, true);
+    const output = formatBriefing(results);
     expect(output).toContain('Fallback status');
     expect(output).toContain('Anthropic: unavailable (HTTP 500)');
-    expect(output).toContain('4) Optional X post draft');
   });
 
   it('renders graceful no-data briefing when all sources fail', () => {
@@ -93,7 +92,7 @@ describe('formatBriefing', () => {
       { source: 'Google Gemini', ok: false, items: [], error: 'timeout' }
     ];
 
-    const output = formatBriefing(results, false);
+    const output = formatBriefing(results);
     expect(output).toContain('No live updates could be parsed right now');
     expect(output).toContain('graceful no-data briefing');
   });

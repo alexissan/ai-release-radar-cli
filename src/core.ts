@@ -264,7 +264,7 @@ export function formatCompare(results: SourceFetchResult[], days = 2): string {
   return lines.join('\n');
 }
 
-export function formatBriefing(results: SourceFetchResult[], includeTweet = false): string {
+export function formatBriefing(results: SourceFetchResult[]): string {
   const top = pickTopUpdates(results, 5);
   const reachable = results.filter((r) => r.ok).map((r) => r.source);
   const failed = results.filter((r) => !r.ok);
@@ -309,21 +309,12 @@ export function formatBriefing(results: SourceFetchResult[], includeTweet = fals
     );
   }
 
-  if (includeTweet) {
-    lines.push('');
-    lines.push('4) Optional X post draft');
-    const tweet = top.length > 0
-      ? buildTweet(top)
-      : 'AI Release Radar: Tier-1 AI news pages were partially unreachable today. Worth checking OpenAI, Anthropic, and Google Gemini official pages directly.';
-    lines.push(`- ${tweet}`);
-  }
-
   return lines.join('\n');
 }
 
-export async function runToday(includeTweet = false): Promise<string> {
+export async function runToday(): Promise<string> {
   const settled = await Promise.all(SOURCES.map((s) => fetchSource(s)));
-  return formatBriefing(settled, includeTweet);
+  return formatBriefing(settled);
 }
 
 export async function runCompare(days = 2): Promise<string> {

@@ -12,9 +12,8 @@ program
 program
   .command('today')
   .description('Show today\'s concise AI release briefing')
-  .option('--tweet', 'Include an optional X post draft under 260 chars')
-  .action(async (opts: { tweet?: boolean }) => {
-    const output = await runToday(Boolean(opts.tweet));
+  .action(async () => {
+    const output = await runToday();
     console.log(output);
   });
 
