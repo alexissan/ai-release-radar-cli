@@ -1,6 +1,6 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-10 07:25 UTC
+Generated: 2026-03-10 08:21 UTC
 
 ```text
 AI Release Radar — Today
@@ -19,7 +19,7 @@ AI Release Radar — Today
 - Pick the most relevant update above and run a 30-minute spike: test your core prompt/workflow against it, capture quality and cost deltas, and decide go/no-go.
 
 Fallback status
-- OpenAI: unavailable (No parsable updates found)
+- OpenAI: unavailable (HTTP 403)
 - Recovered with partial briefing from reachable sources.
 
 4) Optional X post draft
