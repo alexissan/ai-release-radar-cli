@@ -1,8 +1,7 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-10 14:26 UTC
+Generated: 2026-03-10 15:06 UTC
 
-```text
 AI Release Radar — Today
 
 1) Top updates
@@ -21,4 +20,3 @@ AI Release Radar — Today
 Fallback status
 - OpenAI: unavailable (HTTP 403)
 - Recovered with partial briefing from reachable sources.
-```
