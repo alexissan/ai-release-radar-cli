@@ -29,8 +29,8 @@ export const SOURCES: SourceConfig[] = [
     name: 'OpenAI',
     url: 'https://openai.com/sitemap.xml',
     engineeringUrls: [
-      'https://github.com/openai/openai-node/releases.atom',
-      'https://github.com/openai/openai-python/releases.atom'
+      'https://nitter.net/OpenAIDevs/rss',
+      'https://nitter.net/OpenAI/rss'
     ]
   },
   {
@@ -38,7 +38,8 @@ export const SOURCES: SourceConfig[] = [
     url: 'https://www.anthropic.com/news',
     engineeringUrls: [
       'https://www.anthropic.com/engineering',
-      'https://docs.anthropic.com/en/release-notes/api'
+      'https://docs.anthropic.com/en/release-notes/api',
+      'https://nitter.net/AnthropicAI/rss'
     ]
   },
   { name: 'Google Gemini', url: 'https://blog.google/products/gemini/' }
@@ -125,27 +126,60 @@ function slugToTitle(pathname: string): string {
     .trim();
 }
 
-function extractOpenAiFromSitemap(xml: string, limit = 4): UpdateItem[] {
+function parseLocs(xml: string): string[] {
+  return Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((m) => m[1]);
+}
+
+async function extractOpenAiFromSitemap(xml: string, limit = 4): Promise<UpdateItem[]> {
   const out: UpdateItem[] = [];
   const seen = new Set<string>();
-  const locs = Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((m) => m[1]);
+  const locs = parseLocs(xml);
 
-  for (const loc of locs) {
+  const tryAdd = (loc: string) => {
     try {
       const u = new URL(loc);
-      if (!u.pathname.startsWith('/index/')) continue;
-      if (u.pathname === '/index/' || u.pathname === '/index.xml') continue;
+      const p = u.pathname.toLowerCase();
+      if (p.includes('/sitemap.xml/')) return;
+      if (!(p.startsWith('/index/') || p.startsWith('/engineering/'))) return;
+      if (p.endsWith('/index/') || p.endsWith('/engineering/')) return;
+      const segments = p.split('/').filter(Boolean);
+      if (segments.length < 2) return;
       const key = u.toString();
-      if (seen.has(key)) continue;
+      if (seen.has(key)) return;
       seen.add(key);
-      out.push({ source: 'OpenAI', title: slugToTitle(u.pathname), url: u.toString() });
-      if (out.length >= limit) break;
+      out.push({ source: 'OpenAI', title: slugToTitle(u.pathname), url: key });
     } catch {
-      continue;
+      // ignore
+    }
+  };
+
+  // Direct URLs if present
+  for (const loc of locs) {
+    tryAdd(loc);
+    if (out.length >= limit) return out.slice(0, limit);
+  }
+
+  // If top-level is a sitemap index, follow a few relevant nested sitemaps.
+  const nested = locs
+    .filter((u) => u.includes('/sitemap.xml/'))
+    .filter((u) => /(engineering|api|chatgpt|company|page)/i.test(u))
+    .slice(0, 5);
+
+  for (const sitemapUrl of nested) {
+    try {
+      const r = await fetchWithTimeout(sitemapUrl, 12000);
+      if (!r.ok) continue;
+      const nestedXml = await r.text();
+      for (const loc of parseLocs(nestedXml)) {
+        tryAdd(loc);
+        if (out.length >= limit) return out.slice(0, limit);
+      }
+    } catch {
+      // ignore nested errors
     }
   }
 
-  return out;
+  return out.slice(0, limit);
 }
 
 function decodeEntities(text: string): string {
@@ -199,6 +233,23 @@ function extractFromAtom(xml: string, source: SourceName, limit = 3): UpdateItem
   return out;
 }
 
+function extractFromRss(xml: string, source: SourceName, limit = 2): UpdateItem[] {
+  const out: UpdateItem[] = [];
+  const items = Array.from(xml.matchAll(/<item>([\s\S]*?)<\/item>/g));
+  for (const it of items) {
+    const block = it[1];
+    const rawTitle = block.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? '';
+    const rawLink = block.match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? '';
+    const title = decodeEntities(rawTitle.replace(/<!\[CDATA\[|\]\]>/g, '').replace(/\s+/g, ' ').trim());
+    const link = decodeEntities(rawLink.replace(/<!\[CDATA\[|\]\]>/g, '').trim());
+    if (!title || !link) continue;
+    if (title.startsWith('RT by')) continue;
+    out.push({ source, title: `[X] ${title}`, url: link });
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 function dedupeItems(items: UpdateItem[], limit: number): UpdateItem[] {
   const seen = new Set<string>();
   const out: UpdateItem[] = [];
@@ -226,7 +277,7 @@ export async function fetchSource(source: SourceConfig, limit = 4): Promise<Sour
 
     const body = await res.text();
     let items = source.name === 'OpenAI'
-      ? extractOpenAiFromSitemap(body, Math.max(limit, 3))
+      ? await extractOpenAiFromSitemap(body, Math.max(limit, 3))
       : extractLinks(body, source.url, source.name, Math.max(limit, 3));
 
     if (source.engineeringUrls && source.engineeringUrls.length > 0) {
@@ -237,6 +288,8 @@ export async function fetchSource(source: SourceConfig, limit = 4): Promise<Sour
           const extraBody = await extraRes.text();
           if (extraUrl.endsWith('.atom')) {
             items = items.concat(extractFromAtom(extraBody, source.name, 2));
+          } else if (extraUrl.endsWith('/rss') || extraBody.includes('<rss')) {
+            items = items.concat(extractFromRss(extraBody, source.name, 2));
           } else {
             items = items.concat(extractLinks(extraBody, extraUrl, source.name, 2));
           }
