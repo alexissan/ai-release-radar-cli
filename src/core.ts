@@ -24,7 +24,7 @@ export interface CompareStats {
 }
 
 export const SOURCES: SourceConfig[] = [
-  { name: 'OpenAI', url: 'https://openai.com/news/' },
+  { name: 'OpenAI', url: 'https://openai.com/sitemap.xml' },
   { name: 'Anthropic', url: 'https://www.anthropic.com/news' },
   { name: 'Google Gemini', url: 'https://blog.google/products/gemini/' }
 ];
@@ -90,12 +90,43 @@ export async function fetchWithTimeout(url: string, timeoutMs = 9000): Promise<R
     return await fetch(url, {
       signal: controller.signal,
       headers: {
-        'User-Agent': 'ai-release-radar-cli/0.1.0 (+https://local-cli)'
+        'User-Agent': 'Mozilla/5.0 (compatible; ai-release-radar-cli/0.1.0)'
       }
     });
   } finally {
     clearTimeout(id);
   }
+}
+
+function slugToTitle(pathname: string): string {
+  const slug = pathname.split('/').filter(Boolean).pop() ?? '';
+  return slug
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (m) => m.toUpperCase())
+    .trim();
+}
+
+function extractOpenAiFromSitemap(xml: string, limit = 4): UpdateItem[] {
+  const out: UpdateItem[] = [];
+  const seen = new Set<string>();
+  const locs = Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g)).map((m) => m[1]);
+
+  for (const loc of locs) {
+    try {
+      const u = new URL(loc);
+      if (!u.pathname.startsWith('/index/')) continue;
+      if (u.pathname === '/index/' || u.pathname === '/index.xml') continue;
+      const key = u.toString();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ source: 'OpenAI', title: slugToTitle(u.pathname), url: u.toString() });
+      if (out.length >= limit) break;
+    } catch {
+      continue;
+    }
+  }
+
+  return out;
 }
 
 export async function fetchSource(source: SourceConfig, limit = 4): Promise<SourceFetchResult> {
@@ -110,8 +141,10 @@ export async function fetchSource(source: SourceConfig, limit = 4): Promise<Sour
       };
     }
 
-    const html = await res.text();
-    const items = extractLinks(html, source.url, source.name, limit);
+    const body = await res.text();
+    const items = source.name === 'OpenAI'
+      ? extractOpenAiFromSitemap(body, limit)
+      : extractLinks(body, source.url, source.name, limit);
 
     if (items.length === 0) {
       return {

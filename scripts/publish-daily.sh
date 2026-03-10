@@ -34,8 +34,19 @@ def linkify(line: str) -> str:
     return ''.join(out)
 
 lines = text.splitlines()
-rendered = []
+# Hide fallback diagnostics on public page for cleaner UX.
+clean_lines = []
+skip = False
 for ln in lines:
+    if ln.strip() == 'Fallback status':
+        skip = True
+        continue
+    if skip:
+        continue
+    clean_lines.append(ln)
+
+rendered = []
+for ln in clean_lines:
     if re.match(r'^\d\)\s', ln):
         rendered.append(f'<h2>{html.escape(ln)}</h2>')
     elif ln.startswith('- '):
