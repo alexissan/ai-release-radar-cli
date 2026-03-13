@@ -1,14 +1,14 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-12 23:15 UTC
+Generated: 2026-03-13 00:49 UTC
 
 AI Release Radar — Today
 
 1) Top updates
-- [OpenAI] Gpt 5 2 Codex (https://openai.com/index/gpt-5-2-codex/)
+- [OpenAI] Openai Grove (https://openai.com/index/openai-grove/)
 - [Anthropic] Where things stand with the Department of War Announcements Mar 5, 2026 A statement from Dario Amodei. (https://www.anthropic.com/news/where-stand-department-war)
 - [Google Gemini] Gemini 3 brings upgraded smarts and new capabilities to the Gemini app Today we’re unveiling a major update for the Gemini app, and it all starts with Gemini 3. (https://blog.google/products-and-platforms/products/gemini/gemini-3-gemini-app/)
-- [OpenAI] Openai Grove (https://openai.com/index/openai-grove/)
+- [OpenAI] Gpt 5 2 Codex (https://openai.com/index/gpt-5-2-codex/)
 - [Anthropic] Announcements Feb 27, 2026 Statement on the comments from Secretary of War Pete Hegseth Anthropic's response to the Secretary of War and advice to customers. (https://www.anthropic.com/news/statement-comments-secretary-war)
 
 2) Why it matters (founders/devs)
