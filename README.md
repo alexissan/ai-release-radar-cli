@@ -7,6 +7,10 @@ Daily concise AI release briefing so you don’t have to live on X all day.
 - Anthropic News
 - Google Gemini (Google official blog)
 
+Good for:
+- founders and engineers who want AI updates without doomscrolling
+- people building on OpenAI/Anthropic/Gemini who need a quick “what changed?”
+
 ## Requirements
 
 - Node.js 20+
