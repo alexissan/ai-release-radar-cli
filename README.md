@@ -1,6 +1,8 @@
 # ai-release-radar-cli
 
-Daily concise AI release briefing from official Tier-1 sources:
+Daily concise AI release briefing so you don’t have to live on X all day.
+
+`ai-release-radar-cli` pulls from official Tier-1 sources and turns them into a short briefing:
 - OpenAI News
 - Anthropic News
 - Google Gemini (Google official blog)
