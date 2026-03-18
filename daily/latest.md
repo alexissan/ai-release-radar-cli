@@ -1,15 +1,15 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-18 16:33 UTC
+Generated: 2026-03-18 17:31 UTC
 
 AI Release Radar — Today
 
 1) Top updates
-- [OpenAI] Ai For Self Empowerment (https://openai.com/index/ai-for-self-empowerment/)
-- [Anthropic] Where things stand with the Department of War Announcements Mar 5, 2026 A statement from Dario Amodei. (https://www.anthropic.com/news/where-stand-department-war)
+- [OpenAI] Parameter Golf (https://openai.com/index/parameter-golf/)
+- [Anthropic] Product Feb 17, 2026 Introducing Claude Sonnet 4.6 Sonnet 4.6 delivers frontier performance across coding, agents, and professional work at scale. (https://www.anthropic.com/news/claude-sonnet-4-6)
 - [Google Gemini] Gemini 3 brings upgraded smarts and new capabilities to the Gemini app Today we’re unveiling a major update for the Gemini app, and it all starts with Gemini 3. (https://blog.google/products-and-platforms/products/gemini/gemini-3-gemini-app/)
-- [OpenAI] Openai Grove (https://openai.com/index/openai-grove/)
-- [Anthropic] Announcements Feb 27, 2026 Statement on the comments from Secretary of War Pete Hegseth Anthropic's response to the Secretary of War and advice to customers. (https://www.anthropic.com/news/statement-comments-secretary-war)
+- [OpenAI] Ai For Self Empowerment (https://openai.com/index/ai-for-self-empowerment/)
+- [Anthropic] Announcements Feb 5, 2026 Introducing Claude Opus 4.6 We’re upgrading our smartest model. Across agentic coding, computer use, tool use, search, and finance, Opus 4.6 is an industry-leading model, often by wide margin. (https://www.anthropic.com/news/claude-opus-4-6)
 
 2) Why it matters (founders/devs)
 - Model/platform updates can change product quality, latency, and cost assumptions quickly. Re-check your roadmap and evaluation suite before shipping this week.
