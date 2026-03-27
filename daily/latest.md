@@ -1,11 +1,11 @@
 # AI Release Radar — Latest
 
-Generated: 2026-03-27 20:18 UTC
+Generated: 2026-03-27 21:19 UTC
 
 AI Release Radar — Today
 
 1) Top updates
-- [OpenAI] Virgin Atlantic Oliver Byers (https://openai.com/index/virgin-atlantic-oliver-byers/)
+- [OpenAI] Parameter Golf (https://openai.com/index/parameter-golf/)
 - [Anthropic] Product Feb 17, 2026 Introducing Claude Sonnet 4.6 Sonnet 4.6 delivers frontier performance across coding, agents, and professional work at scale. (https://www.anthropic.com/news/claude-sonnet-4-6)
 - [Google Gemini] Gemini 3 brings upgraded smarts and new capabilities to the Gemini app Today we’re unveiling a major update for the Gemini app, and it all starts with Gemini 3. (https://blog.google/products-and-platforms/products/gemini/gemini-3-gemini-app/)
 - [OpenAI] Launching Sora Responsibly (https://openai.com/index/launching-sora-responsibly/)
