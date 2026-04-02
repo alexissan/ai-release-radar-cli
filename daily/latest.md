@@ -1,14 +1,14 @@
 # AI Release Radar — Latest
 
-Generated: 2026-04-02 08:32 UTC
+Generated: 2026-04-02 09:31 UTC
 
 AI Release Radar — Today
 
 1) Top updates
-- [OpenAI] Launching Sora Responsibly (https://openai.com/index/launching-sora-responsibly/)
+- [OpenAI] Virgin Atlantic Oliver Byers (https://openai.com/index/virgin-atlantic-oliver-byers/)
 - [Anthropic] Product Feb 17, 2026 Introducing Claude Sonnet 4.6 Sonnet 4.6 delivers frontier performance across coding, agents, and professional work at scale. (https://www.anthropic.com/news/claude-sonnet-4-6)
 - [Google Gemini] Gemini 3 brings upgraded smarts and new capabilities to the Gemini app Today we’re unveiling a major update for the Gemini app, and it all starts with Gemini 3. (https://blog.google/products-and-platforms/products/gemini/gemini-3-gemini-app/)
-- [OpenAI] Virgin Atlantic Oliver Byers (https://openai.com/index/virgin-atlantic-oliver-byers/)
+- [OpenAI] Launching Sora Responsibly (https://openai.com/index/launching-sora-responsibly/)
 - [Anthropic] Announcements Feb 5, 2026 Introducing Claude Opus 4.6 We’re upgrading our smartest model. Across agentic coding, computer use, tool use, search, and finance, Opus 4.6 is an industry-leading model, often by wide margin. (https://www.anthropic.com/news/claude-opus-4-6)
 
 2) Why it matters (founders/devs)
